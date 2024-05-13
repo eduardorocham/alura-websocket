@@ -4,6 +4,7 @@ import path from "path"
 import "dotenv/config"
 import http from "http";
 import { Server } from "socket.io";
+import "./dbConnect.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -17,6 +18,6 @@ const httpServer = http.createServer(app);
 
 httpServer.listen(port, () => console.log(`Server is running on port: ${port}`));
 
-const io  = new Server(httpServer);
+const io = new Server(httpServer);
 
 export default io;
