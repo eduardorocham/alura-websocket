@@ -1,42 +1,25 @@
 import io from "./server.js";
-
-const documentos = [
-    {
-        nome: "JavaScript",
-        texto: "texto de javascript..."
-    },
-    {
-        nome: "Node",
-        texto: "texto de node..."
-    },
-    {
-        nome: "Socket.io",
-        texto: "texto de socket.io..."
-    },
-]
+import { encontrarDocumento, atualizarDocumento } from "./documentosDb.js";
 
 io.on("connection", (socket) => {
     console.log("A client has connected! ID: ", socket.id);
 
-    socket.on("selecionar_documento", (nomeDocumento, devolverTexto) => {
+    socket.on("selecionar_documento", async (nomeDocumento, devolverTexto) => {
         socket.join(nomeDocumento);
 
-        const documento = encontrarDocumento(nomeDocumento);
+        const documento = await encontrarDocumento(nomeDocumento);
 
         if (documento) {
             // socket.emit("texto_documento", documento.texto);
+            devolverTexto(documento.texto);
         }
-
-        devolverTexto(documento.texto);
     })
 
-    socket.on("texto_editor", ({ texto, nomeDocumento }) => {
+    socket.on("texto_editor", async ({ texto, nomeDocumento }) => {
         // socket.broadcast.emit("texto_editor_clientes", texto);
-        const documento = encontrarDocumento(nomeDocumento);
+        const atualizacao = await atualizarDocumento(nomeDocumento, texto);
 
-        if (documento) {
-            documento.texto = texto;
-
+        if (atualizacao.modifiedCount) {
             socket.to(nomeDocumento).emit("texto_editor_clientes", texto);
         }
     })
@@ -47,7 +30,3 @@ io.on("connection", (socket) => {
     });
 })
 
-function encontrarDocumento(nomeDocumento) {
-    const documento = documentos.find(doc => doc.nome === nomeDocumento);
-    return documento;
-}
