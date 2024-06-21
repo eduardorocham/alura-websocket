@@ -1,8 +1,15 @@
 import io from "./server.js";
-import { encontrarDocumento, atualizarDocumento } from "./documentosDb.js";
+import { encontrarDocumento, atualizarDocumento, obterDocumentos } from "./documentosDb.js";
 
 io.on("connection", (socket) => {
     console.log("A client has connected! ID: ", socket.id);
+
+    socket.on("obter_documentos", async (devolverDocumentos) => {
+        // console.log("O cliente está solicitando os documentos!");
+        const documentos = await obterDocumentos();
+
+        devolverDocumentos(documentos);
+    });
 
     socket.on("selecionar_documento", async (nomeDocumento, devolverTexto) => {
         socket.join(nomeDocumento);
@@ -13,7 +20,7 @@ io.on("connection", (socket) => {
             // socket.emit("texto_documento", documento.texto);
             devolverTexto(documento.texto);
         }
-    })
+    }) 
 
     socket.on("texto_editor", async ({ texto, nomeDocumento }) => {
         // socket.broadcast.emit("texto_editor_clientes", texto);

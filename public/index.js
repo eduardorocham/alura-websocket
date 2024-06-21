@@ -14,4 +14,6 @@ function inserirLinkDocumento(nomeDocumento) {
     `
 }
 
+export { inserirLinkDocumento }
+
 inserirLinkDocumento("JavaScript");
