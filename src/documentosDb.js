@@ -12,6 +12,15 @@ export function encontrarDocumento(nomeDocumento) {
     return documento;
 }
 
+export function adicionarDocumento(nomeDocumento) {
+    const resultado = documentosColecao.insertOne({
+        nome: nomeDocumento,
+        texto: ""
+    });
+
+    return resultado;
+}
+
 export function atualizarDocumento(nomeDocumento, texto) {
     const atualizacao = documentosColecao.updateOne({
         nome: nomeDocumento

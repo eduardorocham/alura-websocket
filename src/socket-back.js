@@ -1,5 +1,5 @@
 import io from "./server.js";
-import { encontrarDocumento, atualizarDocumento, obterDocumentos } from "./documentosDb.js";
+import { encontrarDocumento, atualizarDocumento, obterDocumentos, adicionarDocumento } from "./documentosDb.js";
 
 io.on("connection", (socket) => {
     console.log("A client has connected! ID: ", socket.id);
@@ -9,6 +9,15 @@ io.on("connection", (socket) => {
         const documentos = await obterDocumentos();
 
         devolverDocumentos(documentos);
+    });
+
+    socket.on("adicionar_documento", async (nomeDocumento) => {
+        const resultado = await adicionarDocumento(nomeDocumento);
+        
+        if (resultado.acknowledged) {
+            // Emite evento para todos os clientes
+            io.emit("adicionar_documento_interface", nomeDocumento);
+        }
     });
 
     socket.on("selecionar_documento", async (nomeDocumento, devolverTexto) => {
