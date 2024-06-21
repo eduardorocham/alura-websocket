@@ -24,3 +24,7 @@ socket.on("disconnect", (motivo) => {
     console.log(`Servidor desconectado!
     Motivo: ${motivo}`);
 });
+
+export function emitirExcluirDocumento(nome) {
+    socket.emit("excluir_documento", nome);
+}

@@ -1,5 +1,10 @@
 import io from "./server.js";
-import { encontrarDocumento, atualizarDocumento, obterDocumentos, adicionarDocumento } from "./documentosDb.js";
+import { encontrarDocumento, 
+    atualizarDocumento, 
+    obterDocumentos, 
+    adicionarDocumento, 
+    excluirDocumento 
+} from "./documentosDb.js";
 
 io.on("connection", (socket) => {
     console.log("A client has connected! ID: ", socket.id);
@@ -12,6 +17,13 @@ io.on("connection", (socket) => {
     });
 
     socket.on("adicionar_documento", async (nomeDocumento) => {
+        const documentoExiste = (await encontrarDocumento(nomeDocumento)) !== null;
+
+        if (documentoExiste) {
+            socket.emit("documento_existente", nomeDocumento);
+            return;
+        }
+
         const resultado = await adicionarDocumento(nomeDocumento);
         
         if (resultado.acknowledged) {
@@ -44,5 +56,10 @@ io.on("connection", (socket) => {
         console.log(`Cliente "${socket.id}" desconectado!
         Motivo: ${motivo}`);
     });
+
+    socket.on("excluir_documento", async (nome) => {
+        const resultado = await excluirDocumento(nome);
+        console.log(resultado)
+    })
 })
 

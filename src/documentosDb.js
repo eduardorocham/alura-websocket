@@ -32,3 +32,11 @@ export function atualizarDocumento(nomeDocumento, texto) {
 
     return atualizacao;
 }
+
+export function excluirDocumento(nome) {
+    const resultado = documentosColecao.deleteOne({
+        nome
+    });
+
+    return resultado;
+}
